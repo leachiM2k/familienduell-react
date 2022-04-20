@@ -1,3 +1,5 @@
+import classnames from 'classnames';
+
 export default function Display(props) {
     const showSchweinchen = () => {
         if (!props.game.round || props.game.scene !== 'schweinchen') {
@@ -14,10 +16,7 @@ export default function Display(props) {
         }
     };
 
-    const onAnswerText = props.onAnswerText || function () {};
-    const onAnswerCount = props.onAnswerCount || function () {};
-    const onFailLeft = props.onFailLeft || function () {};
-    const onFailRight = props.onFailRight || function () {};
+    const { onAnswerText, onAnswerCount, onFailLeft, onFailRight } = props;
 
     return (
         <div className={"topContainer bgColor textColor mainHeight " + (props.showMini && "miniDisplay")} id="display">
@@ -44,14 +43,16 @@ export default function Display(props) {
                         }
                         return (
                             <div>
-                                <div className="answerNr nr">{idx + 1}.</div>
+                                <div className="answerNr nr">
+                                    {props.game.round < 3 ? (idx + 1) + '.' : '>'}
+                                </div>
                                 <div className="answer answerText"><span
                                     className={props.showMini && !props.game.answers.includes(idx) && "markOnHover"}
-                                    onClick={onAnswerText.bind(null, idx)}>{antwortText}</span>
+                                    onClick={onAnswerText && onAnswerText.bind(null, idx)}>{antwortText}</span>
                                 </div>
                                 <div className="points answerPoints"><span
                                     className={props.showMini && !props.game.answerCounts.includes(idx) && "markOnHover"}
-                                    onClick={onAnswerCount.bind(null, idx)}>{anzText}</span></div>
+                                    onClick={onAnswerCount && onAnswerCount.bind(null, idx)}>{anzText}</span></div>
                             </div>
                         );
                     })}
@@ -75,24 +76,28 @@ export default function Display(props) {
                 <div className="pointsRight">{props.game.right.points}</div>
             </div>
 
-            <div className="xmarker xmarkerLeft markerStyle">
+            {props.game.scene === 'questions' && <>
+                <div className={classnames('xmarker', 'xmarkerLeft', { 'markerStyle': !!onFailLeft })}>
                 <span className={props.game.left.fails < 1 ? "marker" : "marker fail"}
-                      onClick={onFailLeft.bind(null, 1)}>X</span>
-                <span className={props.game.left.fails < 2 ? "marker" : "marker fail"}
-                      onClick={onFailLeft.bind(null, 2)}>X</span>
-                <span className={props.game.left.fails < 3 ? "marker" : "marker fail"}
-                      onClick={onFailLeft.bind(null, 3)}>X</span>
-            </div>
-            <div className="xmarker xmarkerRight markerStyle">
+                      onClick={() => onFailLeft && onFailLeft(1)}>X</span>
+                    <span className={props.game.left.fails < 2 ? "marker" : "marker fail"}
+                          onClick={() => onFailLeft && onFailLeft(2)}>X</span>
+                    <span className={props.game.left.fails < 3 ? "marker" : "marker fail"}
+                          onClick={() => onFailLeft && onFailLeft(3)}>X</span>
+                </div>
+                <div className={classnames('xmarker', 'xmarkerRight', { 'markerStyle': !!onFailRight })}>
                 <span className={props.game.right.fails < 1 ? "marker" : "marker fail"}
-                      onClick={onFailRight.bind(null, 1)}>X</span>
-                <span className={props.game.right.fails < 2 ? "marker" : "marker fail"}
-                      onClick={onFailRight.bind(null, 2)}>X</span>
-                <span className={props.game.right.fails < 3 ? "marker" : "marker fail"}
-                      onClick={onFailRight.bind(null, 3)}>X</span>
-            </div>
-            {props.game.intro && <img className="intro introImage" src="./img/logo.png"/>}
-            {props.game.blackScreen && <div className="blackScreen"/>}
+                      onClick={() => onFailRight && onFailRight(1)}>X</span>
+                    <span className={props.game.right.fails < 2 ? "marker" : "marker fail"}
+                          onClick={() => onFailRight && onFailRight(2)}>X</span>
+                    <span className={props.game.right.fails < 3 ? "marker" : "marker fail"}
+                          onClick={() => onFailRight && onFailRight(3)}>X</span>
+                </div>
+            </>}
+
+
+            {props.game.scene === 'intro' && <img className="intro introImage" src="./img/logo.png"/>}
+            {props.game.scene === 'blackscreen' && <div className="blackScreen"/>}
 
             <style jsx>{`
             .blackScreen {
@@ -111,13 +116,14 @@ export default function Display(props) {
             }
             .miniDisplay #answers, .miniDisplay #displayQuestions { font-size: 1.5em; }                        
             .introImage { position: absolute; top: 0px; width: 100%; height: 100%; }
-            .xmarkerLeft { position: absolute; bottom: -64px; left: 34px }
-            .xmarkerRight{ position: absolute; bottom: -64px; right: 34px }
-            .marker { cursor:pointer; position:relative; top:-5px; padding-left: 4px; padding-right: 4px; }
+            .xmarkerLeft { position: absolute; bottom: -64px; left: 34px }
+            .xmarkerRight{ position: absolute; bottom: -64px; right: 34px }
+            ,markerStyle { cursor: pointer; }
+            .marker { position:relative; top:-5px; padding-left: 4px; padding-right: 4px; }
             .marker.fail { color: rgb(211, 16, 16); }
-            .resultContainer { position:absolute; bottom:65px; right:38px; font-size: 1.5em; }
-            .headerSumme { float:left; padding-right: 20px; } 
-            #SumRes { width:50px; float: left; text-align:right; }
+            .resultContainer { position:absolute; bottom:65px; right:38px; font-size: 1.5em; }
+            .headerSumme { float:left; padding-right: 20px; } 
+            #SumRes { width:50px; float: left; text-align:right; }
             #resultFinal { position:absolute; bottom:95px; width:100%; font-size: 1.5em; }
             #resultFinalBox { display: flex;justify-content: center; }
             #SumRes_player1 { width:6%; float: left; text-align:center; }
@@ -128,9 +134,9 @@ export default function Display(props) {
             #pointsCenter { position:absolute; left:50%; width: 80px; margin-left: -40px; top: -5px; text-align: center }
             .pointsRight { position:absolute; right:35px; top: -5px; }
             
-            .answerNr { width: 5%; text-align: center; float: left; }
-            .answerText { width: 89%; text-align: center; float: left }
-            .answerPoints { width: 6%; float: left; text-align: right }
+            .answerNr { width: 5%; text-align: center; float: left; }
+            .answerText { width: 89%; text-align: center; float: left }
+            .answerPoints { width: 6%; float: left; text-align: right }
       `}</style>
         </div>
     )

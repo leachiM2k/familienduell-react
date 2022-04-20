@@ -9,8 +9,6 @@ const IP = 'localhost';
 const initialState = {
     currentQuestionIndex: null,
     currentQuestion: null,
-    intro: true,
-    blackScreen: true,
     round: 0,
     answers: [],
     answerCounts: [],
@@ -29,11 +27,16 @@ const initialState = {
 
     sounds: true,
 
-    scene: 'intro' // may be: intro, schweinchen, question, finale
+    scene: 'blackscreen' // may be: blackscreen, intro, schweinchen, questions, finale
 };
 
 export async function getStaticProps() {
-    const questions = getQuestions();
+    const questions = shuffle(getQuestions());
+
+    questions.forEach(question => {
+        question.antworten.sort((a, b) => b.anz - a.anz);
+    });
+
     return {
         props: {
             questions
@@ -55,7 +58,6 @@ export default class ControllerPage extends React.Component {
         this.ws = new WebSocket('ws://' + IP + ':' + WSPort);
 
         this.ws.onopen = () => {
-            console.log('***** [display:16] ********************** ', this.ws);
             console.log("connected to Websocket Server!!!");
             this.wsSend({ game: this.state.game });
         };
@@ -96,9 +98,14 @@ export default class ControllerPage extends React.Component {
             if (gameState.currentQuestionIndex === null) {
                 return null;
             }
+            const question = this.props.questions[gameState.currentQuestionIndex];
+            let antworten = [...question.antworten];
+            if(gameState.round > 3) {
+                antworten = gameState.answers.map(idx => antworten[idx])
+            }
             return ({
-                frage: this.props.questions[gameState.currentQuestionIndex].frage,
-                antworten: this.props.questions[gameState.currentQuestionIndex].antworten.map((ans, idx) => ({
+                frage: question.frage,
+                antworten: antworten.map((ans, idx) => ({
                     antwort: gameState.answers.includes(idx) ? ans.antwort : null,
                     anz: gameState.answerCounts.includes(idx) ? ans.anz : null,
                 }))
@@ -106,35 +113,79 @@ export default class ControllerPage extends React.Component {
         };
 
         const mapNameToAction = {
-            startIntro: () => {
-                gameState.intro = true;
-            },
-            stopIntro: () => {
-                gameState.intro = false;
+            setIntro: () => {
+                gameState.scene = 'intro';
             },
             setBlackscreen: () => {
-                gameState.blackScreen = !gameState.blackScreen;
+                gameState.scene = 'blackscreen';
+            },
+            nextRound1: () => {
+                gameState.round = 1;
+                gameState.scene = 'schweinchen';
+                if (gameState.currentQuestionIndex === null || gameState.currentQuestionIndex === this.props.questions.length) {
+                    gameState.currentQuestionIndex = 0;
+                } else {
+                    gameState.currentQuestionIndex++;
+                }
+                gameState.answers = [];
+                gameState.answerCounts = [];
+                gameState.left.fails = 0;
+                gameState.right.fails = 0;
+                gameState.pointsInProgress = 0;
+            },
+            nextRound2: () => {
+                gameState.round = 2;
+                gameState.scene = 'schweinchen';
+                if (gameState.currentQuestionIndex === null || gameState.currentQuestionIndex === this.props.questions.length) {
+                    gameState.currentQuestionIndex = 0;
+                } else {
+                    gameState.currentQuestionIndex++;
+                }
+                gameState.answers = [];
+                gameState.answerCounts = [];
+                gameState.left.fails = 0;
+                gameState.right.fails = 0;
+                gameState.pointsInProgress = 0;
+            },
+            nextRound3: () => {
+                gameState.round = 3;
+                gameState.scene = 'schweinchen';
+                if (gameState.currentQuestionIndex === null || gameState.currentQuestionIndex === this.props.questions.length) {
+                    gameState.currentQuestionIndex = 0;
+                } else {
+                    gameState.currentQuestionIndex++;
+                }
+                gameState.answers = [];
+                gameState.answerCounts = [];
+                gameState.left.fails = 0;
+                gameState.right.fails = 0;
+                gameState.pointsInProgress = 0;
             },
             nextRound: () => {
-                if (gameState.round < 3) {
-                    gameState.round++;
-                    if (gameState.currentQuestionIndex === null || gameState.currentQuestionIndex === this.props.questions.length) {
-                        gameState.currentQuestionIndex = 0;
-                    } else {
-                        gameState.currentQuestionIndex++;
-                    }
-                    gameState.answers = [];
-                    gameState.answerCounts = [];
-                    gameState.left.points = 0;
-                    gameState.right.points = 0;
-                    gameState.left.fails = 0;
-                    gameState.right.fails = 0;
-                    gameState.scene = 'schweinchen';
+                gameState.round++;
+                if (gameState.currentQuestionIndex === null || gameState.currentQuestionIndex === this.props.questions.length) {
+                    gameState.currentQuestionIndex = 0;
+                } else {
+                    gameState.currentQuestionIndex++;
                 }
+                gameState.answers = [];
+
+                if (gameState.round <= 3) {
+                    gameState.scene = 'schweinchen';
+                } else {
+                    for (let i = 0; i < this.props.questions[gameState.currentQuestionIndex].antworten.length; i++) {
+                        gameState.answers.push(i);
+                    }
+                    shuffle(gameState.answers);
+                    gameState.scene = 'questions';
+                }
+
+                gameState.answerCounts = [];
+                gameState.left.fails = 0;
+                gameState.right.fails = 0;
+                gameState.pointsInProgress = 0;
             },
             showQuestion: () => {
-                gameState.intro = false;
-                gameState.blackScreen = false;
                 gameState.scene = 'questions';
             },
             answerTextClick: () => {
@@ -174,8 +225,37 @@ export default class ControllerPage extends React.Component {
             gameState.currentQuestion = buildCurrentQuestion();
             this.setState({ game: gameState });
             this.wsSend({ game: gameState });
+        } else {
+            console.error(`Unknown action: ${name}`);
         }
+    }
 
+    handleRoundSelect = (event) => {
+        this.handleClick(event.target.value)();
+    }
+
+    handleQuizContinuation = () => {
+        if(this.state.game.scene === 'blackscreen') {
+            this.handleClick('setIntro')();
+        }
+        else if(this.state.game.scene === 'intro') {
+            this.handleClick('nextRound1')();
+        }
+        else if(this.state.game.scene === 'schweinchen') {
+            this.handleClick('showQuestion')();
+        }
+        else if(this.state.game.scene === 'questions') {
+            if(this.state.game.pointsInProgress > 0) {
+                alert('Bitte weisen Sie vor dem Fortfahren die Punkte dem linken oder rechten Team zu.');
+                return;
+            }
+
+            if(this.state.game.round < 3) {
+                this.handleClick('nextRound')();
+            } else {
+                this.handleClick('finale')();
+            }
+        }
     }
 
     render() {
@@ -185,69 +265,48 @@ export default class ControllerPage extends React.Component {
                          answers={this.state.game.currentQuestionIndex !== null && this.props.questions[this.state.game.currentQuestionIndex].antworten}
                          onAnswerText={this.handleClick('answerTextClick')}
                          onAnswerCount={this.handleClick('answerCountClick')}
-                         onFailLeft={this.handleClick('failLeftClick')}
-                         onFailRight={this.handleClick('failRightClick')}
+                         onFailLeft={this.state.game.scene === "questions" ? this.handleClick('failLeftClick') : null}
+                         onFailRight={this.state.game.scene === "questions" ? this.handleClick('failRightClick') : null}
                 />
                 <div className="controller">
                     <div id="buttonsDownUnder">
                         <table border="1">
                             <tbody>
                             <tr>
-                                <td><b>Intro</b></td>
+                                <td><b>Rundenauswahl</b></td>
                                 <td><b>Schweinchen</b></td>
                                 <td><b>Optionen</b></td>
                                 <td><b>Spielende</b></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <button onClick={this.handleClick('startIntro')}
-                                            id="startIntroBtn" disabled={this.state.game.intro === true}>
-                                        <i className="fa fa-play"></i> Intro!
-                                    </button>
+                                    <button onClick={this.handleQuizContinuation}>Weiter im Programm</button>
                                     <br/>
-                                    <button onClick={this.handleClick('stopIntro')}
-                                            id="stopIntroBtn" disabled={this.state.game.intro === false}>
-                                        <i className="fa fa-stop"></i> Intro!
-                                    </button>
-                                    <br/>
-                                    <label htmlFor="blackScreenCheck">Blackscreen:</label>
-                                    <input onClick={this.handleClick('setBlackscreen')} id="blackScreenCheck"
-                                           checked={this.state.game.blackScreen} type="checkbox"
-                                           style={{ verticalAlign: 'text-bottom' }}/>
-                                </td>
-                                <td>
-                                    Runde: <input type="number" maxLength={1} style={{ width: '50px' }}
-                                                  value={this.state.game.round}/><br/>
-                                    <button onClick={this.handleClick('nextRound')}>Nächste Runde</button>
-                                    <br/>
-                                    <button onClick={this.handleClick('showQuestion')}>Fragen anzeigen</button>
-                                </td>
-                                <td>
-                                    <button onClick={this.handleClick('clearFails')}  id="clearAllFailsBtn">[X] leeren</button>
-                                    <br/>
-                                    <button onClick={this.handleClick('pointsToLeft')}>Punkte zum rechten Team</button>
-                                    <br/>
-                                    <button onClick={this.handleClick('pointsToRight')}>Punkte zum linken Team</button>
-                                    <br/>
-                                </td>
-                                <td>
-                                    <button id="showFinalScores">Show Final Scores</button>
-                                    <br/><br/>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <table>
-                            <tbody>
-                            <tr>
-                                <td><b>Fragenliste:</b><br/>
-                                    <select style={{ minWidth: '400px' }} size="5" id="questionsSelect">
-                                        {this.props.questions.map((question, idx) =>
-                                            <option key={question.kuerzel}
-                                                    selected={this.state.game.currentQuestionIndex === idx}
-                                                    value={idx}>{question.kuerzel} {question.antworten.length}</option>
-                                        )}
+                                    <select size="5" onChange={this.handleRoundSelect}>
+                                        <option value="setBlackscreen" selected={this.state.game.scene === 'blackscreen'}>Vor Anfang: Bildschirm aus</option>
+                                        <option value="setIntro" selected={this.state.game.scene === 'intro'}>Anfang: Intro einspielen</option>
+                                        <option value="nextRound1" selected={this.state.game.round === 1}>Runde 1: X Top Antworten</option>
+                                        <option value="nextRound2" selected={this.state.game.round === 2}>Runde 2: X Top Antworten</option>
+                                        <option value="nextRound3" selected={this.state.game.round === 3}>Runde 3: X Top Antworten</option>
+                                        <option value="finale" selected={this.state.game.scene === 'finale'}>Finale</option>
                                     </select>
+                                </td>
+                                <td>
+                                    {this.state.game.scene === 'schweinchen' && <button onClick={this.handleClick('showQuestion')}>Fragen anzeigen</button>}
+                                </td>
+                                <td>
+                                    <button disabled={(this.state.game.right.fails + this.state.game.left.fails) === 0} onClick={this.handleClick('clearFails')} >[X] leeren</button>
+                                    {this.state.game.pointsInProgress > 0 && <>
+                                        <br/>
+                                        <button onClick={this.handleClick('pointsToRight')}>Punkte zum rechten Team</button>
+                                        <br/>
+                                        <button onClick={this.handleClick('pointsToLeft')}>Punkte zum linken Team</button>
+                                        <br/>
+                                    </>}
+                                </td>
+                                <td>
+                                    <button>Show Final Scores</button>
+                                    <br/><br/>
                                 </td>
                             </tr>
                             </tbody>
@@ -261,4 +320,12 @@ export default class ControllerPage extends React.Component {
             </Layout>
         )
     }
+}
+
+function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
 }

@@ -9,7 +9,7 @@ const IP = 'localhost';
 export default class DisplayPage extends Component {
     constructor() {
         super();
-        this.state = { game: null };
+        this.state = { audioDisabled: true, playSound: null, game: null };
     }
 
     componentDidMount() {
@@ -17,11 +17,16 @@ export default class DisplayPage extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if(!prevState.game || this.state.playSound) return;
-        if (this.state.game.intro && this.state.game.scene === 'intro' && !this.state.game.blackScreen) {
+        if (!prevState.game) {
+            return;
+        }
+        if(prevState.playSound !== null && this.state.playSound === null) {
+            return;
+        }
+        if (prevState.game.scene !== this.state.game.scene && this.state.game.scene === 'intro') {
             this.setState({ playSound: './sounds/intro.ogg' });
         }
-        if (this.state.game.scene === 'schweinchen') {
+        if (prevState.game.scene !== this.state.game.scene && this.state.game.scene === 'schweinchen') {
             this.setState({ playSound: './sounds/schweinchen.ogg' });
         }
         if (prevState.game.answerCounts.length < this.state.game.answerCounts.length) {
@@ -76,19 +81,17 @@ export default class DisplayPage extends Component {
     // }
 
     playSoundMaybe = () => {
-        let soundName = null;
-        if (this.state.playSound) {
-            soundName = this.state.playSound;
-        }
-        if (!soundName) {
+        if (!this.state.playSound) {
             return null;
         }
         return (
             <Sound
-                url={soundName}
+                url={this.state.playSound}
                 autoLoad={true}
                 playStatus={Sound.status.PLAYING}
-                onFinishedPlaying={() => this.setState({ playSound: null })}
+                onFinishedPlaying={() => {
+                    this.setState({ playSound: null })
+                }}
             />
         );
     };
@@ -99,7 +102,14 @@ export default class DisplayPage extends Component {
         }
         return (
             <Layout>
-                {this.state.game.blackScreen && <div className="blackScreen"/>}
+                {this.state.audioDisabled &&
+                    <button style={{zIndex:1020, position:'absolute', bottom: 0}} onClick={() => {
+                        this.setState({ playSound: './sounds/zahlRichtig.ogg', audioDisabled: false });
+                    }}>
+                        Enable Audio
+                    </button>
+                }
+                {this.state.game.scene === 'blackscreen' && <div className="blackScreen"/>}
                 {this.playSoundMaybe()}
                 <Display game={this.state.game}/>
                 <style jsx>{`
