@@ -1,10 +1,18 @@
 import Display from '../components/Display';
 import Layout from '../components/Layout';
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {getQuestions} from '../lib/questions';
 
 const WSPort = 3001;
 const IP = 'localhost';
+
+const shuffle = a => {
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+};
 
 const initialState = {
     currentQuestionIndex: null,
@@ -44,29 +52,31 @@ export async function getStaticProps() {
     }
 }
 
-export default class ControllerPage extends React.Component {
-    constructor() {
-        super();
-        this.state = { game: { ...initialState } };
+const ControllerPage = ({questions}) => {
+    const [game, setGame] = useState(initialState);
+    const ws = useRef(null);
+
+    const wsSend = (msg) => {
+        const payload = JSON.stringify(msg);
+        console.log("send", payload);
+        if (ws.current?.readyState === WebSocket.OPEN) {
+            ws.current.send(payload);
+        }
     }
 
-    componentDidMount() {
-        this.connectWs();
-    }
+    const connectWs = () => {
+        ws.current = new WebSocket('ws://' + IP + ':' + WSPort);
 
-    connectWs() {
-        this.ws = new WebSocket('ws://' + IP + ':' + WSPort);
-
-        this.ws.onopen = () => {
+        ws.current.onopen = () => {
             console.log("connected to Websocket Server!!!");
-            this.wsSend({ game: this.state.game });
+            wsSend({ game: game });
         };
 
-        this.ws.onclose = () => {
+        ws.current.onclose = () => {
             console.log("disconnected from Websocket Server!!!");
         };
 
-        this.ws.onmessage = event => {
+        ws.current.onmessage = event => {
             const message = JSON.parse(event.data);
             if (message.connection) {
                 /*
@@ -76,29 +86,29 @@ export default class ControllerPage extends React.Component {
                 */
                 if (message.connection === 'connected') {
                     console.log('***** New Client connected, sending game state to all client' );
-                    this.wsSend({ game: this.state.game });
+                    wsSend({ game: game });
                 }
             }
             console.log("msg: ", message);
         };
-    }
 
-    wsSend(msg) {
-        const payload = JSON.stringify(msg);
-        console.log("send", payload);
-        if (this.ws.readyState === WebSocket.OPEN) {
-            this.ws.send(payload);
+        return () => {
+            ws.current.close();
         }
     }
 
-    handleClick = (name) => (event) => {
-        const gameState = this.state.game;
+    useEffect(() => {
+        connectWs();
+    }, []);
+
+    const handleClick = (name) => (event) => {
+        const gameState = { ...game };
 
         const buildCurrentQuestion = () => {
             if (gameState.currentQuestionIndex === null) {
                 return null;
             }
-            const question = this.props.questions[gameState.currentQuestionIndex];
+            const question = questions[gameState.currentQuestionIndex];
             let antworten = [...question.antworten];
             if(gameState.round > 3) {
                 antworten = gameState.answers.map(idx => antworten[idx])
@@ -122,7 +132,7 @@ export default class ControllerPage extends React.Component {
             nextRound1: () => {
                 gameState.round = 1;
                 gameState.scene = 'schweinchen';
-                if (gameState.currentQuestionIndex === null || gameState.currentQuestionIndex === this.props.questions.length) {
+                if (gameState.currentQuestionIndex === null || gameState.currentQuestionIndex === questions.length) {
                     gameState.currentQuestionIndex = 0;
                 } else {
                     gameState.currentQuestionIndex++;
@@ -136,7 +146,7 @@ export default class ControllerPage extends React.Component {
             nextRound2: () => {
                 gameState.round = 2;
                 gameState.scene = 'schweinchen';
-                if (gameState.currentQuestionIndex === null || gameState.currentQuestionIndex === this.props.questions.length) {
+                if (gameState.currentQuestionIndex === null || gameState.currentQuestionIndex === questions.length) {
                     gameState.currentQuestionIndex = 0;
                 } else {
                     gameState.currentQuestionIndex++;
@@ -150,7 +160,7 @@ export default class ControllerPage extends React.Component {
             nextRound3: () => {
                 gameState.round = 3;
                 gameState.scene = 'schweinchen';
-                if (gameState.currentQuestionIndex === null || gameState.currentQuestionIndex === this.props.questions.length) {
+                if (gameState.currentQuestionIndex === null || gameState.currentQuestionIndex === questions.length) {
                     gameState.currentQuestionIndex = 0;
                 } else {
                     gameState.currentQuestionIndex++;
@@ -163,7 +173,7 @@ export default class ControllerPage extends React.Component {
             },
             nextRound: () => {
                 gameState.round++;
-                if (gameState.currentQuestionIndex === null || gameState.currentQuestionIndex === this.props.questions.length) {
+                if (gameState.currentQuestionIndex === null || gameState.currentQuestionIndex === questions.length) {
                     gameState.currentQuestionIndex = 0;
                 } else {
                     gameState.currentQuestionIndex++;
@@ -173,7 +183,7 @@ export default class ControllerPage extends React.Component {
                 if (gameState.round <= 3) {
                     gameState.scene = 'schweinchen';
                 } else {
-                    for (let i = 0; i < this.props.questions[gameState.currentQuestionIndex].antworten.length; i++) {
+                    for (let i = 0; i < questions[gameState.currentQuestionIndex].antworten.length; i++) {
                         gameState.answers.push(i);
                     }
                     shuffle(gameState.answers);
@@ -194,7 +204,7 @@ export default class ControllerPage extends React.Component {
             answerCountClick: () => {
                 gameState.answerCounts.push(event);
                 gameState.pointsInProgress = 0;
-                this.props.questions[gameState.currentQuestionIndex].antworten.forEach((ans, idx) => {
+                questions[gameState.currentQuestionIndex].antworten.forEach((ans, idx) => {
                     if(gameState.answerCounts.includes(idx)) {
                         gameState.pointsInProgress += Number(ans.anz);
                     }
@@ -223,109 +233,122 @@ export default class ControllerPage extends React.Component {
         if (mapNameToAction[name]) {
             mapNameToAction[name]();
             gameState.currentQuestion = buildCurrentQuestion();
-            this.setState({ game: gameState });
-            this.wsSend({ game: gameState });
+            setGame(gameState);
+            wsSend({ game: gameState });
         } else {
             console.error(`Unknown action: ${name}`);
         }
     }
 
-    handleRoundSelect = (event) => {
-        this.handleClick(event.target.value)();
+    const handleRoundSelect = (event) => {
+        handleClick(event.target.value)();
     }
 
-    handleQuizContinuation = () => {
-        if(this.state.game.scene === 'blackscreen') {
-            this.handleClick('setIntro')();
+    const handleQuizContinuation = () => {
+        if(game.scene === 'blackscreen') {
+            handleClick('setIntro')();
         }
-        else if(this.state.game.scene === 'intro') {
-            this.handleClick('nextRound1')();
+        else if(game.scene === 'intro') {
+            handleClick('nextRound1')();
         }
-        else if(this.state.game.scene === 'schweinchen') {
-            this.handleClick('showQuestion')();
+        else if(game.scene === 'schweinchen') {
+            handleClick('showQuestion')();
         }
-        else if(this.state.game.scene === 'questions') {
-            if(this.state.game.pointsInProgress > 0) {
+        else if(game.scene === 'questions') {
+            if(game.pointsInProgress > 0) {
                 alert('Bitte weisen Sie vor dem Fortfahren die Punkte dem linken oder rechten Team zu.');
                 return;
             }
 
-            if(this.state.game.round < 3) {
-                this.handleClick('nextRound')();
+            if(game.round < 3) {
+                handleClick('nextRound')();
             } else {
-                this.handleClick('finale')();
+                handleClick('finale')();
             }
         }
     }
 
-    render() {
-        return (
-            <Layout>
-                <Display showMini={true} game={this.state.game}
-                         answers={this.state.game.currentQuestionIndex !== null && this.props.questions[this.state.game.currentQuestionIndex].antworten}
-                         onAnswerText={this.handleClick('answerTextClick')}
-                         onAnswerCount={this.handleClick('answerCountClick')}
-                         onFailLeft={this.state.game.scene === "questions" ? this.handleClick('failLeftClick') : null}
-                         onFailRight={this.state.game.scene === "questions" ? this.handleClick('failRightClick') : null}
-                />
-                <div className="controller">
-                    <div id="buttonsDownUnder">
-                        <table border="1">
-                            <tbody>
-                            <tr>
-                                <td><b>Rundenauswahl</b></td>
-                                <td><b>Schweinchen</b></td>
-                                <td><b>Optionen</b></td>
-                                <td><b>Spielende</b></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <button onClick={this.handleQuizContinuation}>Weiter im Programm</button>
+    const getQuizContinuationValue = () => {
+        if(game.scene === 'blackscreen') {
+            return 'setBlackscreen';
+        }
+        else if(game.scene === 'intro') {
+            return 'setIntro';
+        }
+        else if(game.round === 1) {
+            return 'nextRound1';
+        }
+        else if(game.round === 2) {
+            return 'nextRound2';
+        }
+        else if(game.round === 3) {
+            return 'nextRound3';
+        }
+        else if(game.scene === 'finale') {
+            return 'finale';
+        }
+    }
+
+    return (
+        <Layout>
+            <Display showMini={true} game={game}
+                     answers={game.currentQuestionIndex !== null && questions[game.currentQuestionIndex].antworten}
+                     onAnswerText={handleClick('answerTextClick')}
+                     onAnswerCount={handleClick('answerCountClick')}
+                     onFailLeft={game.scene === "questions" ? handleClick('failLeftClick') : null}
+                     onFailRight={game.scene === "questions" ? handleClick('failRightClick') : null}
+            />
+            <div className="controller">
+                <div id="buttonsDownUnder">
+                    <table border="1">
+                        <tbody>
+                        <tr>
+                            <td><b>Rundenauswahl</b></td>
+                            <td><b>Schweinchen</b></td>
+                            <td><b>Optionen</b></td>
+                            <td><b>Spielende</b></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button onClick={handleQuizContinuation}>Weiter im Programm</button>
+                                <br/>
+                                <select size="5" onChange={handleRoundSelect} value={getQuizContinuationValue()}>
+                                    <option value="setBlackscreen">Vor Anfang: Bildschirm aus</option>
+                                    <option value="setIntro">Anfang: Intro einspielen</option>
+                                    <option value="nextRound1">Runde 1: X Top Antworten</option>
+                                    <option value="nextRound2">Runde 2: X Top Antworten</option>
+                                    <option value="nextRound3">Runde 3: X Top Antworten</option>
+                                    <option value="finale">Finale</option>
+                                </select>
+                            </td>
+                            <td>
+                                {game.scene === 'schweinchen' && <button onClick={handleClick('showQuestion')}>Fragen anzeigen</button>}
+                            </td>
+                            <td>
+                                <button disabled={(game.right.fails + game.left.fails) === 0} onClick={handleClick('clearFails')} >[X] leeren</button>
+                                {game.pointsInProgress > 0 && <>
                                     <br/>
-                                    <select size="5" onChange={this.handleRoundSelect}>
-                                        <option value="setBlackscreen" selected={this.state.game.scene === 'blackscreen'}>Vor Anfang: Bildschirm aus</option>
-                                        <option value="setIntro" selected={this.state.game.scene === 'intro'}>Anfang: Intro einspielen</option>
-                                        <option value="nextRound1" selected={this.state.game.round === 1}>Runde 1: X Top Antworten</option>
-                                        <option value="nextRound2" selected={this.state.game.round === 2}>Runde 2: X Top Antworten</option>
-                                        <option value="nextRound3" selected={this.state.game.round === 3}>Runde 3: X Top Antworten</option>
-                                        <option value="finale" selected={this.state.game.scene === 'finale'}>Finale</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    {this.state.game.scene === 'schweinchen' && <button onClick={this.handleClick('showQuestion')}>Fragen anzeigen</button>}
-                                </td>
-                                <td>
-                                    <button disabled={(this.state.game.right.fails + this.state.game.left.fails) === 0} onClick={this.handleClick('clearFails')} >[X] leeren</button>
-                                    {this.state.game.pointsInProgress > 0 && <>
-                                        <br/>
-                                        <button onClick={this.handleClick('pointsToRight')}>Punkte zum rechten Team</button>
-                                        <br/>
-                                        <button onClick={this.handleClick('pointsToLeft')}>Punkte zum linken Team</button>
-                                        <br/>
-                                    </>}
-                                </td>
-                                <td>
-                                    <button>Show Final Scores</button>
-                                    <br/><br/>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                                    <button onClick={handleClick('pointsToRight')}>Punkte zum rechten Team</button>
+                                    <br/>
+                                    <button onClick={handleClick('pointsToLeft')}>Punkte zum linken Team</button>
+                                    <br/>
+                                </>}
+                            </td>
+                            <td>
+                                <button>Show Final Scores</button>
+                                <br/><br/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <style jsx>{`
+            </div>
+            <style jsx>{`
             #stopIntroBtn {margin-top: 12px; display: block}
             `}</style>
 
-            </Layout>
-        )
-    }
+        </Layout>
+    )
 }
 
-function shuffle(a) {
-    for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-}
+export default ControllerPage;

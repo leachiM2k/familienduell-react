@@ -27,7 +27,6 @@ const handler = (req, res) => {
     }
 };
 const serverApp = createServer(handler);
-const io = require('socket.io')(serverApp);
 
 app.prepare().then(() => {
     serverApp.listen(port, (err) => {

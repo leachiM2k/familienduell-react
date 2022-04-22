@@ -1,25 +1,36 @@
 import Head from 'next/head'
+import React from 'react';
+import Layout from '../components/Layout';
 
 export default function Home() {
-  return (
-    <div className="container">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    return (
+        <Layout>
+            <Head>
+                <title>Familien Duell Rollenauswahl</title>
+            </Head>
 
-      <main>
-          <div id="startDiv" style={{ width: '500px', margin: 'auto' }}>
-              <h1 style={{ fontSize: '5em' }}>Familienduell</h1>
-              <a href="/display" id="displayBtn" style={{ fontSize: '2em', width: '500px' }}>
-                  <i className="fa fa-desktop"></i> DISPLAY
-              </a>
-              <br/>
-              <a href="/controller" id="controllerBtn" style={{ fontSize: '2em', width: '500px', marginTop: '2px' }}>
-                  <i className="fa fa-keyboard-o"></i> CONTROLLER
-              </a>
-          </div>
-      </main>
-    </div>
-  )
+            <h1>Familienduell</h1>
+            <a href="/display" className="roleButtons" id="displayBtn">
+                <i className="fa fa-desktop"></i> DISPLAY
+            </a>
+            <br/>
+            <a href="/controller" id="controllerBtn" className="roleButtons">
+                <i className="fa fa-keyboard-o"></i> CONTROLLER
+            </a>
+
+            <style jsx>{`
+                .roleButtons {
+                    font-size: 2em;
+                    width: 500px;
+                    background: #ddd;
+                    padding: 20px;
+                    display: block;
+                    border: 2px solid;
+                }
+                .roleButtons:hover {
+                    text-decoration: none;
+                }
+            `}</style>
+        </Layout>
+    )
 }

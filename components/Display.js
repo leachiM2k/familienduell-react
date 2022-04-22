@@ -1,37 +1,35 @@
 import classnames from 'classnames';
 
-export default function Display(props) {
+const Display = ({ game, answers, showMini, onAnswerText, onAnswerCount, onFailLeft, onFailRight }) => {
     const showSchweinchen = () => {
-        if (!props.game.round || props.game.scene !== 'schweinchen') {
+        if (!game.round || game.scene !== 'schweinchen') {
             return null;
         }
-        if (props.game.round === 1) {
+        if (game.round === 1) {
             return <img id="schweinchen1Img" className="schweinchenImage" src="./img/schweinchen1.png"/>;
         }
-        if (props.game.round === 2) {
+        if (game.round === 2) {
             return <img id="schweinchen2Img" className="schweinchenImage" src="./img/schweinchen2.png"/>;
         }
-        if (props.game.round === 3) {
+        if (game.round === 3) {
             return <img id="schweinchen3Img" className="schweinchenImage" src="./img/schweinchen3.png"/>;
         }
     };
 
-    const { onAnswerText, onAnswerCount, onFailLeft, onFailRight } = props;
-
     return (
-        <div className={"topContainer bgColor textColor mainHeight " + (props.showMini && "miniDisplay")} id="display">
+        <div className={"topContainer bgColor textColor mainHeight " + (showMini && "miniDisplay")} id="display">
             {showSchweinchen()}
 
-            {props.game.scene === 'questions' && <div>
+            {game.scene === 'questions' && <div>
                 <div id="displayQuestions" className="textColor questionAnswerContainer">
-                    {props.game.currentQuestion && props.game.currentQuestion.frage}
+                    {game.currentQuestion && game.currentQuestion.frage}
                 </div>
 
                 <div id="answers" className="questionAnswerContainer">
-                    {props.game.currentQuestion && props.game.currentQuestion.antworten.map((answer, idx) => {
-                        if (props.answers) {
-                            answer.antwort = answer.antwort || props.answers[idx].antwort;
-                            answer.anz = answer.anz || props.answers[idx].anz;
+                    {game.currentQuestion && game.currentQuestion.antworten.map((answer, idx) => {
+                        if (answers) {
+                            answer.antwort = answer.antwort || answers[idx].antwort;
+                            answer.anz = answer.anz || answers[idx].anz;
                         }
                         let antwortText = ".".repeat(47);
                         if (answer.antwort) {
@@ -44,14 +42,14 @@ export default function Display(props) {
                         return (
                             <div>
                                 <div className="answerNr nr">
-                                    {props.game.round < 3 ? (idx + 1) + '.' : '>'}
+                                    {game.round < 3 ? (idx + 1) + '.' : '>'}
                                 </div>
                                 <div className="answer answerText"><span
-                                    className={props.showMini && !props.game.answers.includes(idx) && "markOnHover"}
+                                    className={showMini && !game.answers.includes(idx) && "markOnHover"}
                                     onClick={onAnswerText && onAnswerText.bind(null, idx)}>{antwortText}</span>
                                 </div>
                                 <div className="points answerPoints"><span
-                                    className={props.showMini && !props.game.answerCounts.includes(idx) && "markOnHover"}
+                                    className={showMini && !game.answerCounts.includes(idx) && "markOnHover"}
                                     onClick={onAnswerCount && onAnswerCount.bind(null, idx)}>{anzText}</span></div>
                             </div>
                         );
@@ -63,41 +61,41 @@ export default function Display(props) {
                     <div id="SumRes">0</div>
                 </div>
             </div>}
-            {props.game.scene === 'finale' && <div id="resultFinal">
+            {game.scene === 'finale' && <div id="resultFinal">
                 <div id="resultFinalBox">
                     <div id="SumRes_player1">10</div>
                     <div id="SumRes_player2">20</div>
                 </div>
             </div>}
-            {props.game.timer && <div id="timer">20</div>}
+            {game.timer && <div id="timer">20</div>}
             <div className="footer" id="footer1">
-                <div className="pointsLeft">{props.game.left.points}</div>
-                <div id="pointsCenter">{props.game.pointsInProgress}</div>
-                <div className="pointsRight">{props.game.right.points}</div>
+                <div className="pointsLeft">{game.left.points}</div>
+                <div id="pointsCenter">{game.pointsInProgress}</div>
+                <div className="pointsRight">{game.right.points}</div>
             </div>
 
-            {props.game.scene === 'questions' && <>
+            {game.scene === 'questions' && <>
                 <div className={classnames('xmarker', 'xmarkerLeft', { 'markerStyle': !!onFailLeft })}>
-                <span className={props.game.left.fails < 1 ? "marker" : "marker fail"}
+                <span className={game.left.fails < 1 ? "marker" : "marker fail"}
                       onClick={() => onFailLeft && onFailLeft(1)}>X</span>
-                    <span className={props.game.left.fails < 2 ? "marker" : "marker fail"}
+                    <span className={game.left.fails < 2 ? "marker" : "marker fail"}
                           onClick={() => onFailLeft && onFailLeft(2)}>X</span>
-                    <span className={props.game.left.fails < 3 ? "marker" : "marker fail"}
+                    <span className={game.left.fails < 3 ? "marker" : "marker fail"}
                           onClick={() => onFailLeft && onFailLeft(3)}>X</span>
                 </div>
                 <div className={classnames('xmarker', 'xmarkerRight', { 'markerStyle': !!onFailRight })}>
-                <span className={props.game.right.fails < 1 ? "marker" : "marker fail"}
+                <span className={game.right.fails < 1 ? "marker" : "marker fail"}
                       onClick={() => onFailRight && onFailRight(1)}>X</span>
-                    <span className={props.game.right.fails < 2 ? "marker" : "marker fail"}
+                    <span className={game.right.fails < 2 ? "marker" : "marker fail"}
                           onClick={() => onFailRight && onFailRight(2)}>X</span>
-                    <span className={props.game.right.fails < 3 ? "marker" : "marker fail"}
+                    <span className={game.right.fails < 3 ? "marker" : "marker fail"}
                           onClick={() => onFailRight && onFailRight(3)}>X</span>
                 </div>
             </>}
 
 
-            {props.game.scene === 'intro' && <img className="intro introImage" src="./img/logo.png"/>}
-            {props.game.scene === 'blackscreen' && <div className="blackScreen"/>}
+            {game.scene === 'intro' && <img className="intro introImage" src="./img/logo.png"/>}
+            {game.scene === 'blackscreen' && <div className="blackScreen"/>}
 
             <style jsx>{`
             .blackScreen {
@@ -140,4 +138,6 @@ export default function Display(props) {
       `}</style>
         </div>
     )
-}
+};
+
+export default Display;
