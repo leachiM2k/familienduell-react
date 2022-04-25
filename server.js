@@ -37,41 +37,38 @@ app.prepare().then(() => {
     })
 })
 
-const subscribers = [];
+const generateClientId = () => Math.random().toString(36).substr(2, 9);
+
+const broadcastMessage = (msg, fromClientId) => {
+    const payload = JSON.stringify(msg);
+    console.log(`broadcast: ${payload} from ${fromClientId} to ${Object.keys(subscribersById).length} clients`);
+    Object.keys(subscribersById).forEach(clientId => {
+        if (clientId !== fromClientId) {
+            subscribersById[clientId].send(payload);
+        }
+    });
+};
+
+const subscribersById= {};
+
 wss.on('connection', ws => {
 
-    subscribers.push(ws);
-    const cId = getClientId();
+    const clientId = generateClientId();
+    subscribersById[clientId] = ws;
 
-    ws.send(JSON.stringify({ clientId: cId, connection: "hello" }));
+    ws.send(JSON.stringify({ clientId: clientId, connection: "hello" }));
 
-    broadcastMessage({ clientId: cId, connection: "connected" }, cId);
+    broadcastMessage({ clientId: clientId, connection: "connected" }, clientId);
 
-    console.log("~~~~~~~~ WELCOME TO SERVER ~~~~~~ s:" + subscribers.length, cId);
-    ws.on('message', function (message) {
-        const payload = JSON.parse(message);
-        broadcastMessage({ clientId: cId, message: payload }, cId);
+    console.log(`~~~~~~~~ WELCOME TO SERVER ~~~~~~ (current clients count: ${Object.keys(subscribersById).length}, new client id: ${clientId})`);
+
+    ws.on('message', message => {
+        broadcastMessage({ clientId, message: JSON.parse(message) }, clientId);
     });
 
     ws.on("close", function () {
-        subscribers.splice(cId, 1);
-        broadcastMessage({ clientId: cId, connection: "disconnected" }, cId);
-        console.log('Subscriber left: ' + subscribers.length + " total.");
+        delete subscribersById[clientId];
+        broadcastMessage({ clientId, connection: "disconnected" }, clientId);
+        console.log(`Subscriber ${clientId} left. Remaining ${Object.keys(subscribersById).length} clients.`);
     });
-
-    function getClientId() {
-        for (var i = 0; i < subscribers.length; i++) {
-            if (subscribers[i] === ws) {
-                return i;
-            }
-        }
-    }
 })
-
-function broadcastMessage(msg, fromCId) {
-    const payload = JSON.stringify(msg);
-    console.log("broadcast:" + payload + " to receiver count:" + subscribers.length);
-    subscribers.forEach((subscriber, index) => {
-        subscriber.send(payload);
-    })
-}

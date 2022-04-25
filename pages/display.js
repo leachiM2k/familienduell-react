@@ -77,22 +77,28 @@ const DisplayPage = () => {
         );
     }
 
-
     return (
         <Layout>
-            {renderAutoplayDetection()}
             {audioDisabled &&
-                <button style={{zIndex:1020, position:'absolute', bottom: 0}} onClick={() => {
+                <button className="enableAudioButton" onClick={() => {
                     setAudioDisabled(false);
                     setPlaySound('./sounds/zahlRichtig.ogg');
                 }}>
-                    Enable Audio
+                    <i className="fa fa-volume-up"/> Enable Audio
                 </button>
             }
             {game.scene === 'blackscreen' && <div className="blackScreen"/>}
             {playSoundMaybe()}
             <Display game={game}/>
             <style jsx>{`
+                .enableAudioButton {
+                    position: absolute;
+                    left: 0;
+                    bottom: 20%;
+                    width: 100%;
+                    z-index: 1020;
+                    font-size: 3rem;
+                }
                 .blackScreen {
                     position: absolute;
                     top: 0;
