@@ -3,6 +3,7 @@ import React, {Component, useEffect, useRef, useState} from 'react';
 
 import Layout from '../components/Layout';
 import Sound from 'react-sound';
+import useSocket from '../lib/useSocket';
 
 const WSPort = 3001;
 const IP = 'localhost';
@@ -20,43 +21,15 @@ const DisplayPage = () => {
     const [playSound, setPlaySound] = useState(null);
     const [game, setGame] = useState(null);
     const prevGame = usePrevious(game);
-    const ws = useRef(null);
-
-    const connectWs = () => {
-        ws.current = new WebSocket('ws://' + IP + ':' + WSPort);
-
-        ws.current.onopen = () => {
-            console.log('***** [display:16] ********************** ', ws);
-            console.log("connected to Websocket Server!!!");
-        }
-
-        ws.current.onclose = () => {
-            console.log("disconnected from Websocket Server!!!");
-        }
-
-        ws.current.onmessage = (event) => {
-            console.log('***** [display:39] ********************** ' );
-            const message = JSON.parse(event.data);
-            if (message.connection) {
-                if (message.connection === 'hello') {
-                    // this.myClientId = message.clientId;
-                }
-            }
-            if (message.message) {
-                if (message.message.game) {
-                    setGame(message.message.game);
-                }
-            }
-            console.log("msg: ", message);
-        }
-
-        return () => {
-            ws.current.close();
-        }
-    }
+    const {message, sendMessage} = useSocket();
 
     useEffect(() => {
-        console.log('***** [display:57] ********************** ' );
+        if(message.message?.game) {
+            setGame(message.message.game);
+        }
+    }, [message])
+
+    useEffect(() => {
         if (!prevGame) {
             return;
         }
@@ -79,10 +52,6 @@ const DisplayPage = () => {
             setPlaySound('./sounds/fail.ogg');
         }
     }, [game]);
-
-    useEffect(() => {
-        return connectWs();
-    }, []);
 
     const playSoundMaybe = () => {
         if (!playSound) {
@@ -108,8 +77,10 @@ const DisplayPage = () => {
         );
     }
 
+
     return (
         <Layout>
+            {renderAutoplayDetection()}
             {audioDisabled &&
                 <button style={{zIndex:1020, position:'absolute', bottom: 0}} onClick={() => {
                     setAudioDisabled(false);

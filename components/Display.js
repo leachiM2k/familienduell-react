@@ -40,7 +40,7 @@ const Display = ({ game, answers, showMini, onAnswerText, onAnswerCount, onFailL
                             anzText = answer.anz;
                         }
                         return (
-                            <div>
+                            <div key={`answer-${game.round}-${idx}`}>
                                 <div className="answerNr nr">
                                     {game.round < 3 ? (idx + 1) + '.' : '>'}
                                 </div>

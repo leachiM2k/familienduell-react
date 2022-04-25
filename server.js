@@ -45,17 +45,17 @@ wss.on('connection', ws => {
 
     ws.send(JSON.stringify({ clientId: cId, connection: "hello" }));
 
-    broadcastMessage({ clientId: cId, connection: "connected" });
+    broadcastMessage({ clientId: cId, connection: "connected" }, cId);
 
     console.log("~~~~~~~~ WELCOME TO SERVER ~~~~~~ s:" + subscribers.length, cId);
     ws.on('message', function (message) {
         const payload = JSON.parse(message);
-        broadcastMessage({ clientId: cId, message: payload });
+        broadcastMessage({ clientId: cId, message: payload }, cId);
     });
 
     ws.on("close", function () {
         subscribers.splice(cId, 1);
-        broadcastMessage({ clientId: cId, connection: "disconnected" });
+        broadcastMessage({ clientId: cId, connection: "disconnected" }, cId);
         console.log('Subscriber left: ' + subscribers.length + " total.");
     });
 
@@ -68,10 +68,10 @@ wss.on('connection', ws => {
     }
 })
 
-function broadcastMessage(msg) {
+function broadcastMessage(msg, fromCId) {
     const payload = JSON.stringify(msg);
-    console.log("broadcast:" + payload + " receiver count:" + subscribers.length);
-    subscribers.forEach(subscriber => {
+    console.log("broadcast:" + payload + " to receiver count:" + subscribers.length);
+    subscribers.forEach((subscriber, index) => {
         subscriber.send(payload);
     })
 }

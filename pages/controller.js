@@ -2,6 +2,7 @@ import Display from '../components/Display';
 import Layout from '../components/Layout';
 import React, {useEffect, useRef, useState} from 'react';
 import {getQuestions} from '../lib/questions';
+import useSocket from '../lib/useSocket';
 
 const WSPort = 3001;
 const IP = 'localhost';
@@ -54,52 +55,13 @@ export async function getStaticProps() {
 
 const ControllerPage = ({questions}) => {
     const [game, setGame] = useState(initialState);
-    const ws = useRef(null);
-
-    const wsSend = (msg) => {
-        const payload = JSON.stringify(msg);
-        console.log("send", payload);
-        if (ws.current?.readyState === WebSocket.OPEN) {
-            ws.current.send(payload);
-        }
-    }
-
-    const connectWs = () => {
-        ws.current = new WebSocket('ws://' + IP + ':' + WSPort);
-
-        ws.current.onopen = () => {
-            console.log("connected to Websocket Server!!!");
-            wsSend({ game: game });
-        };
-
-        ws.current.onclose = () => {
-            console.log("disconnected from Websocket Server!!!");
-        };
-
-        ws.current.onmessage = event => {
-            const message = JSON.parse(event.data);
-            if (message.connection) {
-                /*
-                if (message.connection === 'hello') {
-                    this.myClientId = message.clientId;
-                }
-                */
-                if (message.connection === 'connected') {
-                    console.log('***** New Client connected, sending game state to all client' );
-                    wsSend({ game: game });
-                }
-            }
-            console.log("msg: ", message);
-        };
-
-        return () => {
-            ws.current.close();
-        }
-    }
+    const {message, sendMessage} = useSocket();
 
     useEffect(() => {
-        connectWs();
-    }, []);
+        if (message.connection && message.connection === 'connected') {
+            handleClick('noop')();
+        }
+    }, [message])
 
     const handleClick = (name) => (event) => {
         const gameState = { ...game };
@@ -123,6 +85,7 @@ const ControllerPage = ({questions}) => {
         };
 
         const mapNameToAction = {
+            noop: () => {},
             setIntro: () => {
                 gameState.scene = 'intro';
             },
@@ -234,7 +197,7 @@ const ControllerPage = ({questions}) => {
             mapNameToAction[name]();
             gameState.currentQuestion = buildCurrentQuestion();
             setGame(gameState);
-            wsSend({ game: gameState });
+            sendMessage({ game: gameState });
         } else {
             console.error(`Unknown action: ${name}`);
         }
