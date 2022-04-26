@@ -5,9 +5,6 @@ import Layout from '../components/Layout';
 import Sound from 'react-sound';
 import useSocket from '../lib/useSocket';
 
-const WSPort = 3001;
-const IP = 'localhost';
-
 function usePrevious(value) {
     const ref = useRef();
     useEffect(() => {
@@ -21,7 +18,7 @@ const DisplayPage = () => {
     const [playSound, setPlaySound] = useState(null);
     const [game, setGame] = useState(null);
     const prevGame = usePrevious(game);
-    const {message, sendMessage} = useSocket();
+    const {message, sendMessage} = useSocket('game');
 
     useEffect(() => {
         if(message.message?.game) {

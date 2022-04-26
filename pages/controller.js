@@ -4,9 +4,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import {getQuestions} from '../lib/questions';
 import useSocket from '../lib/useSocket';
 
-const WSPort = 3001;
-const IP = 'localhost';
-
 const shuffle = a => {
     for (let i = a.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -55,10 +52,10 @@ export async function getStaticProps() {
 
 const ControllerPage = ({questions}) => {
     const [game, setGame] = useState(initialState);
-    const {message, sendMessage} = useSocket();
+    const {message, sendMessage} = useSocket('game');
 
     useEffect(() => {
-        if (message.connection && message.connection === 'connected') {
+        if (message.action === 'joined') {
             handleClick('noop')();
         }
     }, [message])
@@ -197,7 +194,7 @@ const ControllerPage = ({questions}) => {
             mapNameToAction[name]();
             gameState.currentQuestion = buildCurrentQuestion();
             setGame(gameState);
-            sendMessage({ game: gameState });
+            sendMessage({ action: 'message', message: { game: gameState } });
         } else {
             console.error(`Unknown action: ${name}`);
         }
