@@ -41,6 +41,7 @@ const generateClientId = () => Math.random().toString(36).substr(2, 9);
 
 const rooms = {
     'game': [],
+    'buzzer': [],
 };
 
 const subscribersById= {};
