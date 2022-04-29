@@ -6,13 +6,13 @@ const Display = ({ game, answers, showMini, onAnswerText, onAnswerCount, onFailL
             return null;
         }
         if (game.round === 1) {
-            return <img id="schweinchen1Img" className="schweinchenImage" src="./img/schweinchen1.png"/>;
+            return <img id="schweinchen1Img" className="schweinchenImage" src="./img/schweinchen1.svg"/>;
         }
         if (game.round === 2) {
-            return <img id="schweinchen2Img" className="schweinchenImage" src="./img/schweinchen2.png"/>;
+            return <img id="schweinchen2Img" className="schweinchenImage" src="./img/schweinchen2.svg"/>;
         }
         if (game.round === 3) {
-            return <img id="schweinchen3Img" className="schweinchenImage" src="./img/schweinchen3.png"/>;
+            return <img id="schweinchen3Img" className="schweinchenImage" src="./img/schweinchen3.svg"/>;
         }
     };
 

@@ -4,6 +4,10 @@ import Layout from '../components/Layout';
 import useSocket from '../lib/useSocket';
 
 const BuzzerPage = () => {
+
+    const foo = typeof window !== 'undefined' ? window.localStorage.getItem('buzzerSettings') || '{}' : '{}';
+
+    const [settings, setSettings] = useState(JSON.parse(foo));
     const [receivedState, setReceivedState] = useState({ });
     const {message, sendMessage, myClientId} = useSocket('buzzer');
 
@@ -16,6 +20,10 @@ const BuzzerPage = () => {
     const handleJoin = (event) => {
         event.preventDefault();
         const newSettings = Object.fromEntries(new FormData(event.target));
+        setSettings(newSettings);
+        if(typeof window !== 'undefined') {
+            window.localStorage.setItem('buzzerSettings', JSON.stringify(newSettings));
+        }
         if(!newSettings.team) {
             alert('Bitte Team auswählen');
             return;
@@ -62,11 +70,11 @@ const BuzzerPage = () => {
             <>
                 <form className="entryForm" onSubmit={handleJoin}>
                     <p>Gebe deinen Daten ein, um mit anderen Buzzern zu können.</p>
-                    <input type="text" name="name" placeholder="Name" autoFocus required/>
-                    <select name="team" required>
+                    <input type="text" name="name" placeholder="Name" defaultValue={settings.name} autoFocus required/>
+                    <select name="team" defaultValue={settings.team} required>
                         <option value="">--- Team wählen ---</option>
-                        <option>Team Links</option>
-                        <option>Team Rechts</option>
+                        <option value="Team Links">Team Links</option>
+                        <option value="Team Rechts">Team Rechts</option>
                     </select>
                     <button type="submit" name="join">Los!</button>
                 </form>
@@ -101,15 +109,23 @@ const BuzzerPage = () => {
                 <style jsx>{`
                 .roleButtons {
                     font-size: 2em;
-                    width: 500px;
+                    width: 200px;
                     height: 200px;
-                    background: #ddd;
+                    background: #DDFF16;
                     padding: 20px;
                     display: block;
-                    border: 2px solid;
+                    border: 2px solid black;
+                    border-radius: 50%;
+                    box-shadow: 10px 10px black;
+                    margin: 10px auto;
+                    cursor: pointer;
                 }
                 .roleButtons:hover {
                     text-decoration: none;
+                }
+                .roleButtons:active, .roleButtons:focus {
+                    transform: translate(8px, 8px);
+                    box-shadow: 2px 2px black;
                 }
             `}</style>
             </>
@@ -121,10 +137,9 @@ const BuzzerPage = () => {
 
             <h1>Familienduell Buzzer</h1>
 
-            {renderCurrentList()}
-
             {renderBuzzArea()}
 
+            {renderCurrentList()}
         </Layout>
     )
 };
