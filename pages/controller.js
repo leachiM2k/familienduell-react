@@ -16,6 +16,7 @@ const initialState = {
     currentQuestionIndex: null,
     currentQuestion: null,
     round: 0,
+    askedQuestions: [],
     answers: [],
     answerCounts: [],
 
@@ -30,8 +31,6 @@ const initialState = {
         fails: 0,
         points: 0,
     },
-
-    sounds: true,
 
     scene: 'blackscreen' // may be: blackscreen, intro, schweinchen, questions, finale
 };
@@ -73,7 +72,7 @@ const ControllerPage = ({questions}) => {
                 antworten = gameState.answers.map(idx => antworten[idx])
             }
             return ({
-                frage: question.frage,
+                frage: gameState.askedQuestions.includes(gameState.currentQuestionIndex) ? question.frage : null,
                 antworten: antworten.map((ans, idx) => ({
                     antwort: gameState.answers.includes(idx) ? ans.antwort : null,
                     anz: gameState.answerCounts.includes(idx) ? ans.anz : null,
@@ -165,6 +164,9 @@ const ControllerPage = ({questions}) => {
             },
             showQuestion: () => {
                 gameState.scene = 'questions';
+            },
+            questionClick: () => {
+                gameState.askedQuestions.push(gameState.currentQuestionIndex);
             },
             answerTextClick: () => {
                 gameState.answers.push(event);
@@ -260,7 +262,9 @@ const ControllerPage = ({questions}) => {
     return (
         <Layout>
             <Display showMini={true} game={game}
+                     question={game.currentQuestionIndex !== null && questions[game.currentQuestionIndex].frage}
                      answers={game.currentQuestionIndex !== null && questions[game.currentQuestionIndex].antworten}
+                     onQuestionClick={handleClick('questionClick')}
                      onAnswerText={handleClick('answerTextClick')}
                      onAnswerCount={handleClick('answerCountClick')}
                      onFailLeft={game.scene === "questions" ? handleClick('failLeftClick') : null}

@@ -1,11 +1,12 @@
 import React from 'react';
+import classnames from 'classnames';
 
-const Question = ({ question }) => {
+const Question = ({ question, isQuestionRevealed, onQuestionClick, showMini }) => {
 
     return (
         <>
-            <div className="question">
-                {question}
+            <div className={classnames('question', {'markOnHover': showMini && !isQuestionRevealed})} onClick={onQuestionClick}>
+                {question || <div>&nbsp;</div>}
             </div>
 
             <style jsx>{`
@@ -14,6 +15,14 @@ const Question = ({ question }) => {
                 overflow: hidden;
                 white-space: unset;
                 text-overflow: unset;
+            }
+            .markOnHover:hover{
+                color:blue;
+                cursor:pointer;
+            }
+            
+            .markOnHover{
+                color:gray;
             }
       `}</style>
         </>

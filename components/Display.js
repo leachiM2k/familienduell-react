@@ -8,7 +8,7 @@ import Blackscreen from './Display/Blackscreen';
 import RoundIntro from './Display/RoundIntro';
 import GameIntro from './Display/GameIntro';
 
-const Display = ({ game, answers, showMini, onAnswerText, onAnswerCount, onFailLeft, onFailRight }) => {
+const Display = ({ game, question, answers, showMini, onQuestionClick, onAnswerText, onAnswerCount, onFailLeft, onFailRight }) => {
     const { observe, height } = useDimensions();
 
     return (
@@ -21,7 +21,7 @@ const Display = ({ game, answers, showMini, onAnswerText, onAnswerCount, onFailL
 
             {game.scene === 'questions' && <>
                 <div className="questionAndAnswerContainer">
-                    <Question question={game.currentQuestion?.frage}/>
+                    <Question question={game.currentQuestion?.frage || question} isQuestionRevealed={!!game.currentQuestion.frage} onQuestionClick={onQuestionClick} showMini={showMini} />
 
                     <Answers
                         showMini={showMini}
