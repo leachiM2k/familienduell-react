@@ -1,0 +1,736 @@
+[
+  {"frage":  "Nennen Sie eine Sportart, die man nicht im Gebirge ausüben kann!", "antworten": [{"antwort": ""}]},
+  {"frage":  "Nennen Sie einen Teil des Fahrrads!", "antworten": [{"antwort": ""}]},
+  {"frage":  "Nennen Sie einen Planeten, der größer ist als die Erde!", "antworten": [{"antwort": ""}]},
+  {"frage":  "Nennen Sie ein wichtiges, jedes Jahr wiederkehrendes Sportereignis!", "antworten": [{"antwort": ""}]},
+  {"frage":  "Nennen Sie ein Multitalent aus Film und Fernsehen!", "antworten": [{"antwort": ""}]},
+
+  {
+    "frage": "Nennen Sie etwas, das Sie machen, wenn im Fernsehen die Werbung läuft!",
+    "antworten": [
+      {
+        "antwort": "Zur Toilette gehen",
+        "anz": 33
+      },
+      {
+        "antwort": "Essen",
+        "anz": 18
+      },
+      {
+        "antwort": "Umschalten",
+        "anz": 11
+      },
+      {
+        "antwort": "Werbung ansehen",
+        "anz": 9
+      },
+      {
+        "antwort": "Getränke holen",
+        "anz": 7
+      },
+      {
+        "antwort": "Zigaretten holen",
+        "anz": 5
+      },
+      {
+        "antwort": "Bügeln",
+        "anz": 4
+      },
+      {
+        "antwort": "Zeitung lesen",
+        "anz": 3
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie ein Gericht, das Mütter kochen, wenn ihr Kind die halbe Schulklasse eingeladen hat.",
+    "antworten": [
+      {
+        "antwort": "Nudeln",
+        "anz": 47
+      },
+      {
+        "antwort": "Pudding",
+        "anz": 14
+      },
+      {
+        "antwort": "Würstchen",
+        "anz": 10
+      },
+      {
+        "antwort": "Pommes Frites",
+        "anz": 9
+      },
+      {
+        "antwort": "Pizza",
+        "anz": 6
+      },
+      {
+        "antwort": "Hamburger",
+        "anz": 5
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie ein Symptom einer gewöhnlichen Erkältung!",
+    "antworten": [
+      {
+        "antwort": "Schnupfen",
+        "anz": 48
+      },
+      {
+        "antwort": "Kopfschmerzen",
+        "anz": 3
+      },
+      {
+        "antwort": "Husten",
+        "anz": 30
+      },
+      {
+        "antwort": "Schüttelfrost",
+        "anz": 3
+      },
+      {
+        "antwort": "Halsschmerzen",
+        "anz": 6
+      },
+      {
+        "antwort": "Niesen",
+        "anz": 5
+      },
+      {
+        "antwort": "Fieber",
+        "anz": 4
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie eine typische Beschäftigung für den Samstagvormittag!",
+    "antworten": [
+      {
+        "antwort": "Backen",
+        "anz": 9
+      },
+      {
+        "antwort": "Autowaschen",
+        "anz": 6
+      },
+      {
+        "antwort": "Schlafen",
+        "anz": 4
+      },
+      {
+        "antwort": "Flohmarkt",
+        "anz": 5
+      },
+      {
+        "antwort": "Putzen",
+        "anz": 23
+      },
+      {
+        "antwort": "Einkaufen",
+        "anz": 50
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie etwas, das man zum Salat ist!",
+    "antworten": [
+      {
+        "antwort": "Brot",
+        "anz": 24
+      },
+      {
+        "antwort": "Fleisch",
+        "anz": 35
+      },
+      {
+        "antwort": "Fisch",
+        "anz": 18
+      },
+      {
+        "antwort": "Käse",
+        "anz": 5
+      },
+      {
+        "antwort": "Krabben",
+        "anz": 4
+      },
+      {
+        "antwort": "Saucen",
+        "anz": 14
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie eine tropische Frucht!",
+    "antworten": [
+      {
+        "antwort": "Orange",
+        "anz": 6
+      },
+      {
+        "antwort": "Banane",
+        "anz": 13
+      },
+      {
+        "antwort": "Mango",
+        "anz": 17
+      },
+      {
+        "antwort": "Ananas",
+        "anz": 31
+      },
+      {
+        "antwort": "Kiwi",
+        "anz": 21
+      },
+      {
+        "antwort": "Maracuja",
+        "anz": 5
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie etwas, dass herumgeschoben wird!",
+    "antworten": [
+      {
+        "antwort": "Rollstuhl",
+        "anz": 3
+      },
+      {
+        "antwort": "Kinder",
+        "anz": 14
+      },
+      {
+        "antwort": "Einkaufswagen",
+        "anz": 8
+      },
+      {
+        "antwort": "Kinderwagen",
+        "anz": 27
+      },
+      {
+        "antwort": "Möbel",
+        "anz": 44
+      },
+      {
+        "antwort": "Servierwage",
+        "anz": 4
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie einen der 4 Evangelisten!",
+    "antworten": [
+      {
+        "antwort": "Lukas",
+        "anz": 38
+      },
+      {
+        "antwort": "Johannes",
+        "anz": 19
+      },
+      {
+        "antwort": "Matthäus",
+        "anz": 20
+      },
+      {
+        "antwort": "Markus",
+        "anz": 23
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie den Beruf, der Ihrer Meinung nach das höchste Ansehen genießt!",
+    "antworten": [
+      {
+        "antwort": "Praktischer Arzt",
+        "anz": 28
+      },
+      {
+        "antwort": "Zahnarzt",
+        "anz": 23
+      },
+      {
+        "antwort": "Tierarzt",
+        "anz": 16
+      },
+      {
+        "antwort": "Apotheker",
+        "anz": 9
+      },
+      {
+        "antwort": "Rechtsanwalt",
+        "anz": 6
+      },
+      {
+        "antwort": "Ingenieur",
+        "anz": 6
+      },
+      {
+        "antwort": "Architekt",
+        "anz": 4
+      },
+      {
+        "antwort": "Lehrer",
+        "anz": 3
+      }
+    ]
+  },
+  {
+    "frage": "Was bringen Sie mit Frankreich in Verbindung?",
+    "antworten": [
+      {
+        "antwort": "Paris",
+        "anz": 35
+      },
+      {
+        "antwort": "Wein",
+        "anz": 23
+      },
+      {
+        "antwort": "Käse",
+        "anz": 14
+      },
+      {
+        "antwort": "Essen",
+        "anz": 10
+      },
+      {
+        "antwort": "Napoleon",
+        "anz": 6
+      },
+      {
+        "antwort": "Lebensart",
+        "anz": 4
+      },
+      {
+        "antwort": "Urlaub",
+        "anz": 3
+      },
+      {
+        "antwort": "de Gaulle",
+        "anz": 3
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie eine deutsche Stadt, in der eine Universität zuhause ist!",
+    "antworten": [
+      {
+        "antwort": "Heidelberg",
+        "anz": 32
+      },
+      {
+        "antwort": "Göttingen",
+        "anz": 4
+      },
+      {
+        "antwort": "Tübingen",
+        "anz": 23
+      },
+      {
+        "antwort": "Gießen",
+        "anz": 3
+      },
+      {
+        "antwort": "Frankfurt",
+        "anz": 16
+      },
+      {
+        "antwort": "München",
+        "anz": 3
+      },
+      {
+        "antwort": "Mainz",
+        "anz": 9
+      },
+      {
+        "antwort": "Berlin",
+        "anz": 8
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie etwas, dass immer auf dem Schreibtisch liegt!",
+    "antworten": [
+      {
+        "antwort": "Briefe",
+        "anz": 12
+      },
+      {
+        "antwort": "Schere",
+        "anz": 5
+      },
+      {
+        "antwort": "Papier",
+        "anz": 48
+      },
+      {
+        "antwort": "Kugelschreiber",
+        "anz": 17
+      },
+      {
+        "antwort": "Zettel",
+        "anz": 9
+      },
+      {
+        "antwort": "Kalender",
+        "anz": 5
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie den Baum, den sie am liebsten pflanzen würden!",
+    "antworten": [
+      {
+        "antwort": "Eiche",
+        "anz": 71
+      },
+      {
+        "antwort": "Buche",
+        "anz": 13
+      },
+      {
+        "antwort": "Linde",
+        "anz": 6
+      },
+      {
+        "antwort": "Kastanie",
+        "anz": 3
+      },
+      {
+        "antwort": "Ahorn",
+        "anz": 3
+      },
+      {
+        "antwort": "Birke",
+        "anz": 3
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie den Berg, auf dem sie gerne einmal stehen würden!",
+    "antworten": [
+      {
+        "antwort": "Matterhorn",
+        "anz": 8
+      },
+      {
+        "antwort": "ilimandscharo",
+        "anz": 13
+      },
+      {
+        "antwort": "Montblanc",
+        "anz": 6
+      },
+      {
+        "antwort": "Nanga Parbat",
+        "anz": 19
+      },
+      {
+        "antwort": "K2",
+        "anz": 21
+      },
+      {
+        "antwort": "Mount Everest",
+        "anz": 30
+      }
+    ]
+  },
+  {
+    "frage": "Welche Lebensmittel kaufen Sie in Dosen?",
+    "antworten": [
+      {
+        "antwort": "Suppe",
+        "anz": 19
+      },
+      {
+        "antwort": "Gemüse",
+        "anz": 23
+      },
+      {
+        "antwort": "Ananas",
+        "anz": 5
+      },
+      {
+        "antwort": "Würstchen",
+        "anz": 11
+      },
+      {
+        "antwort": "Milch",
+        "anz": 27
+      },
+      {
+        "antwort": "Bier",
+        "anz": 8
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie einen Gegenstand, den sie immer bei sich tragen!",
+    "antworten": [
+      {
+        "antwort": "Geldbörse",
+        "anz": 37
+      },
+      {
+        "antwort": "Brieftasche",
+        "anz": 4
+      },
+      {
+        "antwort": "Talisman",
+        "anz": 3
+      },
+      {
+        "antwort": "Taschentuch",
+        "anz": 5
+      },
+      {
+        "antwort": "Schlüssel",
+        "anz": 34
+      },
+      {
+        "antwort": "Ausweis",
+        "anz": 10
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie ein Andenken, das Sie bis heute aus Ihrer Schulzeit aufbewahrt haben!",
+    "antworten": [
+      {
+        "antwort": "Zeugnisse",
+        "anz": 30
+      },
+      {
+        "antwort": "Tafel",
+        "anz": 5
+      },
+      {
+        "antwort": "Fotos",
+        "anz": 21
+      },
+      {
+        "antwort": "Hefte",
+        "anz": 4
+      },
+      {
+        "antwort": "Poesie-Album",
+        "anz": 10
+      },
+      {
+        "antwort": "Füller ",
+        "anz": 8
+      },
+      {
+        "antwort": "Bücher ",
+        "anz": 6
+      }
+    ]
+  },
+  {
+    "frage": "In welchem Beruf findet man fast nur braungebrannte Menschen?",
+    "antworten": [
+      {
+        "antwort": "Bademeister",
+        "anz": 29
+      },
+      {
+        "antwort": "Skilehrer",
+        "anz": 7
+      },
+      {
+        "antwort": "Animateur",
+        "anz": 18
+      },
+      {
+        "antwort": "Tennislehrer",
+        "anz": 4
+      },
+      {
+        "antwort": "Bauarbeiter",
+        "anz": 11
+      },
+      {
+        "antwort": "Seemann",
+        "anz": 3
+      },
+      {
+        "antwort": "Reiseleiter",
+        "anz": 9
+      },
+      {
+        "antwort": "Landwirt",
+        "anz": 8
+      }
+    ]
+  },
+  {
+    "frage": "Welchen Körperteil würden Sie sich von einem Schönheits-Chirurgen operieren lassen?",
+    "antworten": [
+      {
+        "antwort": "Keinen",
+        "anz": 45
+      },
+      {
+        "antwort": "Nase",
+        "anz": 21
+      },
+      {
+        "antwort": "Beine",
+        "anz": 10
+      },
+      {
+        "antwort": "Bauch",
+        "anz": 9
+      },
+      {
+        "antwort": "Busen",
+        "anz": 5
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie einen Beruf, bei dem man ohne Pause reden muß!",
+    "antworten": [
+      {
+        "antwort": "Telefonistin",
+        "anz": 8
+      },
+      {
+        "antwort": "Moderator",
+        "anz": 30
+      },
+      {
+        "antwort": "Ansager",
+        "anz": 10
+      },
+      {
+        "antwort": "Vertreter",
+        "anz": 9
+      },
+      {
+        "antwort": "Politiker",
+        "anz": 23
+      },
+      {
+        "antwort": "Marktschreier",
+        "anz": 6
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie eine Stadt im Ruhrgebiet!",
+    "antworten": [
+      {
+        "antwort": "Gelsenkirchen",
+        "anz": 10
+      },
+      {
+        "antwort": "Oberhausen",
+        "anz": 9
+      },
+      {
+        "antwort": "Dortmund",
+        "anz": 9
+      },
+      {
+        "antwort": "Essen",
+        "anz": 52
+      },
+      {
+        "antwort": "Bochum",
+        "anz": 10
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie einen Körperteil, den man sich verrenken kann!",
+    "antworten": [
+      {
+        "antwort": "Fuß",
+        "anz": 4
+      },
+      {
+        "antwort": "Arm",
+        "anz": 29
+      },
+      {
+        "antwort": "Hals",
+        "anz": 33
+      },
+      {
+        "antwort": "Rücken",
+        "anz": 9
+      },
+      {
+        "antwort": "Hand",
+        "anz": 3
+      },
+      {
+        "antwort": "Schultern",
+        "anz": 13
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie eine Sportart, die man mit einem oder mehreren Tieren ausübt!",
+    "antworten": [
+      {
+        "antwort": "Pferderennen",
+        "anz": 17
+      },
+      {
+        "antwort": "Polo",
+        "anz": 10
+      },
+      {
+        "antwort": "Hundeschlittensport",
+        "anz": 13
+      },
+      {
+        "antwort": "Stierkampf",
+        "anz": 5
+      },
+      {
+        "antwort": "Military",
+        "anz": 5
+      },
+      {
+        "antwort": "Reitsport",
+        "anz": 48
+      }
+    ]
+  },
+  {
+    "frage": "Nennen Sie ein Naturwunder!",
+    "antworten": [
+      {
+        "antwort": "Vulkan",
+        "anz": 17
+      },
+      {
+        "antwort": "AllesLeben",
+        "anz": 4
+      },
+      {
+        "antwort": "Regenbogen",
+        "anz": 25
+      },
+      {
+        "antwort": "Wasserfälle",
+        "anz": 15
+      },
+      {
+        "antwort": "Mondfinsternis",
+        "anz": 13
+      },
+      {
+        "antwort": "Gewitter",
+        "anz": 10
+      }
+    ]
+  }
+]

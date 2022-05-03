@@ -155,6 +155,14 @@ const ControllerPage = ({questions}) => {
                 gameState.right.fails = 0;
                 gameState.pointsInProgress = 0;
             },
+            finale: () => {
+                gameState.scene = 'finale';
+
+                gameState.answerCounts = [];
+                gameState.left.fails = 0;
+                gameState.right.fails = 0;
+                gameState.pointsInProgress = 0;
+            },
             showQuestion: () => {
                 gameState.scene = 'questions';
             },
@@ -283,6 +291,10 @@ const ControllerPage = ({questions}) => {
                             </td>
                             <td>
                                 {game.scene === 'schweinchen' && <button onClick={handleClick('showQuestion')}>Fragen anzeigen</button>}
+                                {game.scene === 'finale' && <div>
+                                    <button>Finalfragen anzeigen</button>
+                                    <button>Nächste Final-Frage</button>
+                                </div>}
                             </td>
                             <td>
                                 <button disabled={(game.right.fails + game.left.fails) === 0} onClick={handleClick('clearFails')} >[X] leeren</button>
